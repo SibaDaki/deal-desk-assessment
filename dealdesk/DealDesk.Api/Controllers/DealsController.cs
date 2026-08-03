@@ -2,16 +2,13 @@ using DealDesk.Api.Auth;
 using DealDesk.Application.DTOs.Requests;
 using DealDesk.Application.DTOs.Responses;
 using DealDesk.Application.Services;
-using DealDesk.Domain.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DealDesk.Api.Controllers
 {
-    [ApiController]
     [Route("api/deals")]
-    [Produces("application/json")]
-    public class DealsController : ControllerBase
+    public class DealsController : ApiControllerBase
     {
         private const string IdempotencyKeyHeader = "Idempotency-Key";
 
@@ -174,32 +171,6 @@ namespace DealDesk.Api.Controllers
         {
             var result = await _dealService.GetStatementAsync(id, cancellationToken);
             return result.IsFailure ? FromError(result.Error!) : Ok(result.Value);
-        }
-
-        private ObjectResult FromError(Error error)
-        {
-            var body = new Dictionary<string, object?>
-            {
-                ["code"] = error.Code,
-                ["message"] = error.Message
-            };
-
-            if (error.Details is not null)
-            {
-                foreach (var (key, value) in error.Details)
-                    body[key] = value;
-            }
-
-            var statusCode = error.Type switch
-            {
-                ErrorType.Validation => StatusCodes.Status422UnprocessableEntity,
-                ErrorType.NotFound => StatusCodes.Status404NotFound,
-                ErrorType.Conflict => StatusCodes.Status409Conflict,
-                ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-                _ => StatusCodes.Status500InternalServerError
-            };
-
-            return StatusCode(statusCode, new Dictionary<string, object?> { ["error"] = body });
         }
     }
 }

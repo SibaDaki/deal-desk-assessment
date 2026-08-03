@@ -5,14 +5,15 @@ namespace DealDesk.Domain.Common
         Validation = 0,
         NotFound = 1,
         Conflict = 2,
-        Forbidden = 3
+        Forbidden = 3,
+        Unauthorized = 4
     }
 
     /// <summary>
     /// A typed domain/application error. <see cref="Type"/> drives the HTTP status
     /// at the transport layer (Validation → 422, NotFound → 404, Conflict → 409,
-    /// Forbidden → 403); <see cref="Details"/> carries structured extras such as
-    /// the list of missing document types.
+    /// Forbidden → 403, Unauthorized → 401); <see cref="Details"/> carries
+    /// structured extras such as the list of missing document types.
     /// </summary>
     public sealed record Error(
         ErrorType Type,
@@ -40,5 +41,8 @@ namespace DealDesk.Domain.Common
 
         public static Error Forbidden(string message = "This action requires the 'analyst' role.") =>
             new(ErrorType.Forbidden, "forbidden", message);
+
+        public static Error Unauthorized(string message = "Invalid username or password.") =>
+            new(ErrorType.Unauthorized, "unauthorized", message);
     }
 }

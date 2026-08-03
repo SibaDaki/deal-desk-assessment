@@ -1,8 +1,11 @@
+using System.Security.Claims;
+
 namespace DealDesk.Api.Auth
 {
     /// <summary>
-    /// Auth is out of scope for this service: the caller's role arrives via the
-    /// X-Actor-Role header ("applicant" or "analyst") and is trusted as-is.
+    /// Resolves the acting role for audit purposes. An authenticated caller's
+    /// role comes from the JWT role claim; otherwise the X-Actor-Role header
+    /// ("applicant" or "analyst") is used, matching the assessment contract.
     /// </summary>
     public static class ActorRoleHeader
     {
@@ -12,6 +15,14 @@ namespace DealDesk.Api.Auth
 
         public static string Resolve(HttpRequest request)
         {
+            var user = request.HttpContext.User;
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var claimedRole = user.FindFirstValue(ClaimTypes.Role) ?? user.FindFirstValue("role");
+                if (!string.IsNullOrWhiteSpace(claimedRole))
+                    return claimedRole.Trim().ToLowerInvariant();
+            }
+
             var value = request.Headers[Name].ToString();
             return string.IsNullOrWhiteSpace(value) ? "anonymous" : value.Trim().ToLowerInvariant();
         }

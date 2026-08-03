@@ -9,6 +9,7 @@ money maths.
 
 - .NET 8 / ASP.NET Core Web API
 - Clean Architecture: `Domain` → `Application` → `Infrastructure` → `Api`
+- JWT Bearer authentication (register/login, PBKDF2 password hashing, role claims)
 - In-memory persistence (allowed by the brief) behind repository interfaces
 - xUnit test suite: domain unit tests + full-stack integration tests via `WebApplicationFactory`
 
@@ -89,18 +90,37 @@ period count (covered by an explicit unit test).
 A blocked approval returns 422 with the missing types, e.g.
 `{"error":{"code":"missing_documents","missing_documents":["purchase_order"],...}}`.
 
-### Roles
+### Authentication and roles
 
-The caller's role arrives via the `X-Actor-Role` header (auth itself is out of
-scope) and each action is gated to the actor the spec assigns it: creating a
-deal and uploading documents are applicant-only, while `review`, `approve`,
-`decline`, `fund` and `repayments` are analyst-only. A missing or wrong role
-gets 403 before any other rule runs; reads are open to any caller.
+Every action is gated to the actor the spec assigns it: creating a deal and
+uploading documents are applicant-only, while `review`, `approve`, `decline`,
+`fund` and `repayments` are analyst-only. A wrong role gets 403 before any
+other rule runs; reads are open to any caller.
+
+The caller's role is established one of two ways:
+
+1. **JWT Bearer token (proper auth).** `POST /api/auth/register` creates a user
+   (`username`, `password`, `role` of `applicant`/`analyst`; passwords stored
+   as salted PBKDF2-SHA256 hashes) and `POST /api/auth/login` exchanges
+   credentials for an HMAC-SHA256-signed JWT whose `role` claim drives the
+   gates. Send it as `Authorization: Bearer <access_token>`; Swagger has an
+   Authorize button for it. Two demo users are seeded at startup:
+   `demo-applicant` / `Applicant#2026` and `demo-analyst` / `Analyst#2026`
+   (configurable under `Auth:SeedUsers`). The signing key in appsettings.json
+   is dev-only — production overrides `Jwt__SigningKey`. A presented-but-invalid
+   token is 401 and never falls back to the header.
+2. **`X-Actor-Role` header (assessment contract).** Unauthenticated callers may
+   assert `applicant` or `analyst` via the header, exactly as the brief
+   specifies, so all acceptance scenarios run unchanged. Set
+   `Auth:AllowActorRoleHeader` to `false` to turn this off; every write then
+   requires a Bearer token (401 without one).
 
 ## API summary
 
 | Endpoint | Role | Success | Errors |
 | --- | --- | --- | --- |
+| `POST /api/auth/register` | any | 201 | 422 |
+| `POST /api/auth/login` | any | 200 | 401, 422 |
 | `POST /api/deals` | applicant | 201 | 403, 422 |
 | `GET /api/deals?status=&funding_type=&page=&page_size=` | any | 200 | 422 (bad filter/paging) |
 | `GET /api/deals/{id}` | any | 200 | 404 |
@@ -112,8 +132,8 @@ gets 403 before any other rule runs; reads are open to any caller.
 | `POST /api/deals/{id}/repayments` | analyst | 201 | 403, 404, 422 |
 | `GET /api/deals/{id}/statement` | any | 200 | 404 |
 
-Error precedence per request: **403 → 404 → 409 → 422**, so e.g. funding a
-`SUBMITTED` deal returns 409 even if the body is also invalid.
+Error precedence per request: **401 → 403 → 404 → 409 → 422**, so e.g. funding
+a `SUBMITTED` deal returns 409 even if the body is also invalid.
 
 ## Seed data
 
@@ -130,6 +150,9 @@ startup deliberately.
 
 ## Bonus features implemented
 
+- **JWT authentication**: register/login endpoints, PBKDF2-SHA256 password
+  hashing, signed Bearer tokens with role claims, seeded demo users, and a
+  config switch to disable the spec's header fallback entirely.
 - **Idempotency** on `POST /api/deals` via the `Idempotency-Key` header —
   replays return the originally created deal (with an `Idempotency-Replayed: true` header) instead of creating a duplicate.
 - **Pagination** on the deal list via `?page=` and `?page_size=` (response body
@@ -139,7 +162,7 @@ startup deliberately.
 
 ## Testing
 
-`dotnet test` runs 72 tests:
+`dotnet test` runs 79 tests:
 
 - **Unit** (`tests/DealDesk.Tests/Unit`): rounding behaviour, period counting
   boundaries (30/31/60/61 days, same-day minimum), document threshold at exactly
@@ -147,8 +170,10 @@ startup deliberately.
   assertions for funding, settlement and overpayment.
 - **Integration** (`tests/DealDesk.Tests/Integration`): all twelve acceptance
   scenarios from the brief end-to-end over HTTP, plus role gates on every
-  analyst endpoint, filters, pagination and idempotency. The clock is injected
-  (`IClock`) and pinned to 2026-06-01 in tests so date rules are deterministic.
+  endpoint, the full JWT flow (register, login, wrong-role 403, invalid-token
+  401, header fallback off), filters, pagination and idempotency. The clock is
+  injected (`IClock`) and pinned to 2026-06-01 in tests — token lifetimes are
+  validated against the same clock — so date rules are deterministic.
 
 ## Assumptions and decisions
 

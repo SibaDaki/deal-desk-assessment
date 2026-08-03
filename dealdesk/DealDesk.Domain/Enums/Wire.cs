@@ -42,10 +42,17 @@ namespace DealDesk.Domain.Enums
             [DocumentType.IdDocument] = "id_document"
         };
 
+        private static readonly Dictionary<UserRole, string> UserRoleToWire = new()
+        {
+            [UserRole.Applicant] = "applicant",
+            [UserRole.Analyst] = "analyst"
+        };
+
         public static string ToWire(this DealStatus value) => StatusToWire[value];
         public static string ToWire(this FundingType value) => FundingTypeToWire[value];
         public static string ToWire(this BuyerSector value) => BuyerSectorToWire[value];
         public static string ToWire(this DocumentType value) => DocumentTypeToWire[value];
+        public static string ToWire(this UserRole value) => UserRoleToWire[value];
 
         public static bool TryParseStatus(string? input, out DealStatus value) =>
             TryParse(StatusToWire, input, out value);
@@ -59,9 +66,13 @@ namespace DealDesk.Domain.Enums
         public static bool TryParseDocumentType(string? input, out DocumentType value) =>
             TryParse(DocumentTypeToWire, input, out value);
 
+        public static bool TryParseUserRole(string? input, out UserRole value) =>
+            TryParse(UserRoleToWire, input, out value);
+
         public static IReadOnlyCollection<string> FundingTypeValues => FundingTypeToWire.Values;
         public static IReadOnlyCollection<string> BuyerSectorValues => BuyerSectorToWire.Values;
         public static IReadOnlyCollection<string> DocumentTypeValues => DocumentTypeToWire.Values;
+        public static IReadOnlyCollection<string> UserRoleValues => UserRoleToWire.Values;
 
         private static bool TryParse<TEnum>(Dictionary<TEnum, string> map, string? input, out TEnum value)
             where TEnum : struct
