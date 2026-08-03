@@ -92,17 +92,19 @@ A blocked approval returns 422 with the missing types, e.g.
 ### Roles
 
 The caller's role arrives via the `X-Actor-Role` header (auth itself is out of
-scope). `review`, `approve`, `decline`, `fund` and `repayments` are
-analyst-only; a missing or non-analyst role gets 403 before any other rule runs.
+scope) and each action is gated to the actor the spec assigns it: creating a
+deal and uploading documents are applicant-only, while `review`, `approve`,
+`decline`, `fund` and `repayments` are analyst-only. A missing or wrong role
+gets 403 before any other rule runs; reads are open to any caller.
 
 ## API summary
 
 | Endpoint | Role | Success | Errors |
 | --- | --- | --- | --- |
-| `POST /api/deals` | any | 201 | 422 |
+| `POST /api/deals` | applicant | 201 | 403, 422 |
 | `GET /api/deals?status=&funding_type=&page=&page_size=` | any | 200 | 422 (bad filter/paging) |
 | `GET /api/deals/{id}` | any | 200 | 404 |
-| `POST /api/deals/{id}/documents` | any | 201 | 404, 422 |
+| `POST /api/deals/{id}/documents` | applicant | 201 | 403, 404, 422 |
 | `POST /api/deals/{id}/review` | analyst | 200 | 403, 404, 409 |
 | `POST /api/deals/{id}/approve` | analyst | 200 | 403, 404, 409, 422 |
 | `POST /api/deals/{id}/decline` | analyst | 200 | 403, 404, 409, 422 (missing reason) |
@@ -137,7 +139,7 @@ startup deliberately.
 
 ## Testing
 
-`dotnet test` runs 71 tests:
+`dotnet test` runs 72 tests:
 
 - **Unit** (`tests/DealDesk.Tests/Unit`): rounding behaviour, period counting
   boundaries (30/31/60/61 days, same-day minimum), document threshold at exactly
@@ -167,5 +169,6 @@ startup deliberately.
 - Documents may be attached in any status; they are only *checked* at
   approval. Repeated uploads of the same type are allowed (e.g. replacing a
   bank statement) — the gate only needs at least one of each required type.
-- Applicant-only restrictions are not enforced on create/documents because the
-  brief defines 403 behaviour only for analyst actions.
+- Create and document upload are applicant-only, mirroring the analyst gate on
+  the underwriting actions, so every write is tied to the actor the spec
+  assigns it. Read endpoints stay open to any caller.

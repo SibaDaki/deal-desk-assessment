@@ -22,8 +22,9 @@ namespace DealDesk.Api.Controllers
             _dealService = dealService;
         }
 
-        /// <summary>Creates a deal in status SUBMITTED and assigns a unique SF-{year}-{seq} reference.</summary>
+        /// <summary>Applicant-only: creates a deal in status SUBMITTED and assigns a unique SF-{year}-{seq} reference.</summary>
         [HttpPost]
+        [RequireRole(ActorRoleHeader.Applicant)]
         [ProducesResponseType(typeof(DealResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> Create(
@@ -80,8 +81,9 @@ namespace DealDesk.Api.Controllers
             return result.IsFailure ? FromError(result.Error!) : Ok(result.Value);
         }
 
-        /// <summary>Attaches document metadata ({doc_type, filename}) to a deal.</summary>
+        /// <summary>Applicant-only: attaches document metadata ({doc_type, filename}) to a deal.</summary>
         [HttpPost("{id:guid}/documents")]
+        [RequireRole(ActorRoleHeader.Applicant)]
         [ProducesResponseType(typeof(DealResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
@@ -99,7 +101,7 @@ namespace DealDesk.Api.Controllers
 
         /// <summary>Analyst-only: SUBMITTED → UNDER_REVIEW.</summary>
         [HttpPost("{id:guid}/review")]
-        [RequireAnalyst]
+        [RequireRole(ActorRoleHeader.Analyst)]
         [ProducesResponseType(typeof(DealResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Review(Guid id, CancellationToken cancellationToken)
         {
@@ -109,7 +111,7 @@ namespace DealDesk.Api.Controllers
 
         /// <summary>Analyst-only: UNDER_REVIEW → APPROVED, gated on required documents and valid terms.</summary>
         [HttpPost("{id:guid}/approve")]
-        [RequireAnalyst]
+        [RequireRole(ActorRoleHeader.Analyst)]
         [ProducesResponseType(typeof(DealResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Approve(
             Guid id,
@@ -123,7 +125,7 @@ namespace DealDesk.Api.Controllers
 
         /// <summary>Analyst-only: SUBMITTED or UNDER_REVIEW → DECLINED.</summary>
         [HttpPost("{id:guid}/decline")]
-        [RequireAnalyst]
+        [RequireRole(ActorRoleHeader.Analyst)]
         [ProducesResponseType(typeof(DealResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Decline(
             Guid id,
@@ -137,7 +139,7 @@ namespace DealDesk.Api.Controllers
 
         /// <summary>Analyst-only: APPROVED → FUNDED; computes the advance from the approved terms.</summary>
         [HttpPost("{id:guid}/fund")]
-        [RequireAnalyst]
+        [RequireRole(ActorRoleHeader.Analyst)]
         [ProducesResponseType(typeof(DealResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Fund(
             Guid id,
@@ -151,7 +153,7 @@ namespace DealDesk.Api.Controllers
 
         /// <summary>Analyst-only: records a repayment against a FUNDED deal; settles it at zero balance.</summary>
         [HttpPost("{id:guid}/repayments")]
-        [RequireAnalyst]
+        [RequireRole(ActorRoleHeader.Analyst)]
         [ProducesResponseType(typeof(RepaymentResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> RecordRepayment(
             Guid id,

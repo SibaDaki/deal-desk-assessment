@@ -43,6 +43,41 @@ namespace DealDesk.Tests.Integration
                 d => d!["applicant_name"]!.GetValue<string>() == "Under Minimum Ltd");
         }
 
+        [Fact]
+        public async Task Applicant_actions_require_the_applicant_role()
+        {
+            var body = new
+            {
+                applicant_name = "Wrong Role Ltd",
+                funding_type = "purchase_order",
+                deal_amount_cents = 50_000_000,
+                buyer_name = "Buyer",
+                buyer_sector = "corporate"
+            };
+
+            var asAnalyst = await Analyst.PostAsJsonAsync("/api/deals", body);
+            Assert.Equal(HttpStatusCode.Forbidden, asAnalyst.StatusCode);
+
+            var withoutRole = await Anonymous.PostAsJsonAsync("/api/deals", body);
+            Assert.Equal(HttpStatusCode.Forbidden, withoutRole.StatusCode);
+
+            var list = await Applicant.GetAsync("/api/deals");
+            Assert.DoesNotContain((await Body(list)).AsArray(),
+                d => d!["applicant_name"]!.GetValue<string>() == "Wrong Role Ltd");
+
+            var deal = await CreateDeal();
+            var id = deal["id"]!.GetValue<string>();
+
+            var document = new { doc_type = "company_registration", filename = "cipc.pdf" };
+            var docAsAnalyst = await Analyst.PostAsJsonAsync($"/api/deals/{id}/documents", document);
+            Assert.Equal(HttpStatusCode.Forbidden, docAsAnalyst.StatusCode);
+
+            var docWithoutRole = await Anonymous.PostAsJsonAsync($"/api/deals/{id}/documents", document);
+            Assert.Equal(HttpStatusCode.Forbidden, docWithoutRole.StatusCode);
+
+            Assert.Empty((await GetDeal(id))["documents"]!.AsArray());
+        }
+
         [Fact] // Acceptance scenario 3
         public async Task Invalid_funding_type_is_rejected()
         {
