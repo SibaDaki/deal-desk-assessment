@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{19028EEB-98A2-4D21-8FC1-F6826335D757}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealDesk.Domain", "dealdesk\DealDesk.Domain\DealDesk.Domain.csproj", "{99551C98-7F23-4D57-8515-B0B24A5EF457}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealDesk.Application", "dealdesk\DealDesk.Application\DealDesk.Application.csproj", "{96BFE4D3-C6BF-4CE5-A897-8AC5D95650AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealDesk.Infrastructure", "dealdesk\DealDesk.Infrastructure\DealDesk.Infrastructure.csproj", "{E52A1AE5-A235-4F17-81B7-5E2216816142}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealDesk.Api", "dealdesk\DealDesk.Api\DealDesk.Api.csproj", "{6B98598F-FCA4-4049-AB13-006622CCCD56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7B664847-4E46-4C03-92EF-06E13645177E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealDesk.Tests", "tests\DealDesk.Tests\DealDesk.Tests.csproj", "{FB9D0063-5494-40EE-9C09-5FBE4FAD1B08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99551C98-7F23-4D57-8515-B0B24A5EF457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99551C98-7F23-4D57-8515-B0B24A5EF457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99551C98-7F23-4D57-8515-B0B24A5EF457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99551C98-7F23-4D57-8515-B0B24A5EF457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96BFE4D3-C6BF-4CE5-A897-8AC5D95650AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96BFE4D3-C6BF-4CE5-A897-8AC5D95650AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96BFE4D3-C6BF-4CE5-A897-8AC5D95650AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96BFE4D3-C6BF-4CE5-A897-8AC5D95650AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E52A1AE5-A235-4F17-81B7-5E2216816142}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E52A1AE5-A235-4F17-81B7-5E2216816142}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E52A1AE5-A235-4F17-81B7-5E2216816142}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E52A1AE5-A235-4F17-81B7-5E2216816142}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B98598F-FCA4-4049-AB13-006622CCCD56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B98598F-FCA4-4049-AB13-006622CCCD56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B98598F-FCA4-4049-AB13-006622CCCD56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B98598F-FCA4-4049-AB13-006622CCCD56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB9D0063-5494-40EE-9C09-5FBE4FAD1B08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB9D0063-5494-40EE-9C09-5FBE4FAD1B08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB9D0063-5494-40EE-9C09-5FBE4FAD1B08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB9D0063-5494-40EE-9C09-5FBE4FAD1B08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{99551C98-7F23-4D57-8515-B0B24A5EF457} = {19028EEB-98A2-4D21-8FC1-F6826335D757}
+		{96BFE4D3-C6BF-4CE5-A897-8AC5D95650AD} = {19028EEB-98A2-4D21-8FC1-F6826335D757}
+		{E52A1AE5-A235-4F17-81B7-5E2216816142} = {19028EEB-98A2-4D21-8FC1-F6826335D757}
+		{6B98598F-FCA4-4049-AB13-006622CCCD56} = {19028EEB-98A2-4D21-8FC1-F6826335D757}
+		{FB9D0063-5494-40EE-9C09-5FBE4FAD1B08} = {7B664847-4E46-4C03-92EF-06E13645177E}
+	EndGlobalSection
+EndGlobal

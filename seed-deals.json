@@ -1,0 +1,60 @@
+{
+  "deals": [
+    {
+      "reference": "SF-2026-0001",
+      "applicant_name": "Kagiso Trading & Projects (Pty) Ltd",
+      "funding_type": "purchase_order",
+      "deal_amount_cents": 82000000,
+      "buyer_name": "Department of Public Works",
+      "buyer_sector": "government",
+      "status": "SUBMITTED",
+      "documents": [
+        { "doc_type": "purchase_order", "filename": "po-dpw-44821.pdf" },
+        { "doc_type": "company_registration", "filename": "cipc-kagiso.pdf" }
+      ]
+    },
+    {
+      "reference": "SF-2026-0002",
+      "applicant_name": "Thuso Medical Supplies CC",
+      "funding_type": "invoice_discounting",
+      "deal_amount_cents": 34500000,
+      "buyer_name": "Gauteng Provincial Treasury",
+      "buyer_sector": "soe",
+      "status": "UNDER_REVIEW",
+      "documents": [
+        { "doc_type": "invoice", "filename": "inv-2026-3391.pdf" },
+        { "doc_type": "company_registration", "filename": "cipc-thuso.pdf" }
+      ]
+    },
+    {
+      "reference": "SF-2026-0003",
+      "applicant_name": "Newtown Civil Contractors (Pty) Ltd",
+      "funding_type": "purchase_order",
+      "deal_amount_cents": 150000000,
+      "buyer_name": "Transnet SOC Ltd",
+      "buyer_sector": "soe",
+      "status": "APPROVED",
+      "terms": {
+        "advance_rate_bps": 9000,
+        "facility_fee_rate_bps": 350,
+        "expected_settlement_date": "2026-09-01"
+      },
+      "documents": [
+        { "doc_type": "purchase_order", "filename": "po-transnet-99120.pdf" },
+        { "doc_type": "company_registration", "filename": "cipc-newtown.pdf" },
+        { "doc_type": "financial_statements", "filename": "afs-newtown-2025.pdf" }
+      ]
+    },
+    {
+      "reference": "SF-2026-0004",
+      "applicant_name": "Lerato Uniforms & Textiles CC",
+      "funding_type": "invoice_discounting",
+      "deal_amount_cents": 26000000,
+      "buyer_name": "Private Retail Group",
+      "buyer_sector": "private",
+      "status": "DECLINED",
+      "decline_reason": "Buyer credit risk too high",
+      "documents": []
+    }
+  ]
+}

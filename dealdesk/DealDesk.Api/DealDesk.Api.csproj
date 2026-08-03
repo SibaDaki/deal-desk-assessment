@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Sample data provided with the assessment; loaded into the store at startup. -->
+    <None Include="..\..\seed-deals.json" Link="seed-deals.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DealDesk.Application\DealDesk.Application.csproj" />
+    <ProjectReference Include="..\DealDesk.Infrastructure\DealDesk.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
